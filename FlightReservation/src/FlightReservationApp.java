@@ -1,14 +1,24 @@
-import com.tus.ca.flight.reservation.service.FlightService;
-import com.tus.ca.flight.reservation.service.impl.FlightServiceImpl;
+import com.tus.ca.flight.reservation.handlers.BookingHandler;
+import com.tus.ca.flight.reservation.handlers.FlightHandler;
+import com.tus.ca.flight.reservation.handlers.PassengerHandler;
+import com.tus.ca.flight.reservation.model.FlightReservationContext;
 
 import java.util.Scanner;
 
 public class FlightReservationApp {
 
-    FlightService flightService;
+    FlightHandler flightHandler;
 
+    PassengerHandler passengerHandler;
+
+    BookingHandler bookingHandler;
+
+    FlightReservationContext flightReservationContext;
     public FlightReservationApp() {
-        flightService = new FlightServiceImpl();
+        flightReservationContext = new FlightReservationContext();
+        flightHandler = new FlightHandler(flightReservationContext);
+        passengerHandler = new PassengerHandler(flightReservationContext);
+        bookingHandler = new BookingHandler(flightReservationContext);
     }
 
     public static void main(String[] args) {
@@ -17,25 +27,35 @@ public class FlightReservationApp {
     }
 
     public void startProcessing() {
-        System.out.println("Welcome to Flight Reservation App");
-        System.out.println("MENU");
-        while(true) {
-            System.out.println("1. Flight");
-            System.out.println("2. Passenger");
-            System.out.println("3. Schedules");
+        System.out.println("Flight Reservation App");
+        boolean shouldAbort  = false;
+        while(!shouldAbort) {
+            System.out.println("      Main Menu     ");
+            System.out.println("====================");
+            System.out.println("1. Schedule Flight Service");
+            System.out.println("2. Passenger Service");
+            System.out.println("3. Booking Service");
             System.out.println("4. Exit Application");
-            System.out.print("Enter your selection : ");
-            Scanner scanner = new Scanner(System.in);
-            int selectedOption = scanner.nextInt();
-            switch (selectedOption) {
+            System.out.println("====================");
+            System.out.print("Enter your choice: ");
+            Scanner in = new Scanner(System.in);
+            int choice = in.nextInt();
+            switch (choice) {
                 case 1:
-                    flightService.flightMenu();
+                    flightHandler.flightServiceMenu();
+                    break;
+                case 2:
+                    passengerHandler.passengerServiceMenu();
+                    break;
+                case 3:
+                    bookingHandler.bookingServiceMenu();
                     break;
                 case 4:
-                    System.out.print("Exiting the application");
-                    System.exit(1);
-                default:
-                    throw new IllegalStateException("Unexpected value: " + selectedOption);
+                    System.out.print("Good Bye! Exiting the app");
+                    shouldAbort = true;
+                    break;
+                default :
+                    throw new IllegalStateException("Unexpected value: " + choice);
             }
         }
     }

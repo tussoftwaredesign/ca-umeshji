@@ -17,8 +17,9 @@ public class Flight {
     private LocalTime arrivalTime;
     private LocalDate effectStartDate;
     private LocalDate effectEndDate;
+    private int routeId;
 
-    public Flight(String carrierCode, String origin, String destination, int flightNumber, List<DayOfWeek> frequencies, LocalTime departureTime, LocalTime arrivalTime, LocalDate effectStartDate, LocalDate effectEndDate) {
+    public Flight(String carrierCode, String origin, String destination, int flightNumber, List<DayOfWeek> frequencies, LocalTime departureTime, LocalTime arrivalTime, LocalDate effectStartDate, LocalDate effectEndDate,int routeId) {
         this.carrierCode = carrierCode;
         this.origin = origin;
         this.destination = destination;
@@ -28,6 +29,8 @@ public class Flight {
         this.arrivalTime = arrivalTime;
         this.effectStartDate = effectStartDate;
         this.effectEndDate = effectEndDate;
+        this.routeId = routeId;
+
     }
 
     public String getCarrierCode() {
@@ -102,16 +105,23 @@ public class Flight {
         this.effectEndDate = effectEndDate;
     }
 
+    public void setRouteId(int routeId) {
+        this.routeId = routeId;
+    }
+
+    public int getRouteId() {
+        return routeId;
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Flight flight = (Flight) o;
-        return flightNumber == flight.flightNumber && Objects.equals(carrierCode, flight.carrierCode) && Objects.equals(origin, flight.origin) && Objects.equals(destination, flight.destination) && Objects.equals(frequencies, flight.frequencies) && Objects.equals(departureTime, flight.departureTime) && Objects.equals(arrivalTime, flight.arrivalTime) && Objects.equals(effectStartDate, flight.effectStartDate) && Objects.equals(effectEndDate, flight.effectEndDate);
+        return flightNumber == flight.flightNumber && Objects.equals(carrierCode, flight.carrierCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(carrierCode, flightNumber, origin, destination, frequencies, departureTime, arrivalTime, effectStartDate, effectEndDate);
+        return Objects.hash(carrierCode, flightNumber);
     }
 
     @Override
@@ -126,6 +136,7 @@ public class Flight {
                 ", arrivalTime=" + arrivalTime +
                 ", effectStartDate=" + effectStartDate +
                 ", effectEndDate=" + effectEndDate +
+                ", routeId=" + routeId +
                 '}';
     }
 }

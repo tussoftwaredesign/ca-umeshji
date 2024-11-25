@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e968a893-35fc-4dc5-90b9-17f0d2b94c8a" name="Changes" comment="" />
+    <list default="true" id="e968a893-35fc-4dc5-90b9-17f0d2b94c8a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FlightReservationApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FlightReservationApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/model/Flight.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/model/Flight.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/model/Passenger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/model/Passenger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/FlightService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/FlightService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/PassengerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/PassengerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/impl/FlightServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/impl/FlightServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/impl/PassengerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/impl/PassengerServiceImpl.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +22,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
+        <option value="Record" />
         <option value="Interface" />
         <option value="Class" />
       </list>
@@ -20,6 +31,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/com/tus/ca/flight/reservation/service/impl/FlightServiceImpl.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
