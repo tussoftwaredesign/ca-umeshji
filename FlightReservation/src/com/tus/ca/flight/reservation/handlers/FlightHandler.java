@@ -1,7 +1,7 @@
 package com.tus.ca.flight.reservation.handlers;
 
 import com.tus.ca.flight.reservation.model.Flight;
-import com.tus.ca.flight.reservation.model.FlightReservationContext;
+import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.service.FlightService;
 import com.tus.ca.flight.reservation.service.impl.FlightServiceImpl;
 
@@ -17,7 +17,7 @@ public class FlightHandler {
 
     FlightService flightService;
 
-    public FlightHandler(FlightReservationContext flightReservationContext) {
+    public FlightHandler(AppContext flightReservationContext) {
         flightService = new FlightServiceImpl(flightReservationContext);
     }
 

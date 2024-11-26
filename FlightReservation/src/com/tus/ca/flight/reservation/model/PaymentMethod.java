@@ -1,10 +1,12 @@
 package com.tus.ca.flight.reservation.model;
 
+import com.tus.ca.flight.reservation.service.Payment;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public record PaymentMethod(String paymentId, BigDecimal amount, String currency, LocalDateTime timestamp) {
+public record PaymentMethod(String paymentId, BigDecimal amount, String currency, LocalDateTime timestamp, Payment payment) {
     public PaymentMethod {
         Objects.requireNonNull(paymentId, "Payment ID cannot be null");
         Objects.requireNonNull(amount, "Amount cannot be null");
@@ -15,4 +17,10 @@ public record PaymentMethod(String paymentId, BigDecimal amount, String currency
             throw new IllegalArgumentException("Amount must be positive");
         }
     }
+
+    public void makePayment() {
+        payment.process(amount,currency);
+    }
+
+
 }

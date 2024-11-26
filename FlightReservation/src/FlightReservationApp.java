@@ -1,7 +1,7 @@
 import com.tus.ca.flight.reservation.handlers.BookingHandler;
 import com.tus.ca.flight.reservation.handlers.FlightHandler;
 import com.tus.ca.flight.reservation.handlers.PassengerHandler;
-import com.tus.ca.flight.reservation.model.FlightReservationContext;
+import com.tus.ca.flight.reservation.model.AppContext;
 
 import java.util.Scanner;
 
@@ -13,9 +13,9 @@ public class FlightReservationApp {
 
     BookingHandler bookingHandler;
 
-    FlightReservationContext flightReservationContext;
+    AppContext flightReservationContext;
     public FlightReservationApp() {
-        flightReservationContext = new FlightReservationContext();
+        flightReservationContext = new AppContext();
         flightHandler = new FlightHandler(flightReservationContext);
         passengerHandler = new PassengerHandler(flightReservationContext);
         bookingHandler = new BookingHandler(flightReservationContext);

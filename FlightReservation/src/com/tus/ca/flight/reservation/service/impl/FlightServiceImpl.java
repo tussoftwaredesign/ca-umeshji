@@ -1,7 +1,7 @@
 package com.tus.ca.flight.reservation.service.impl;
 
 import com.tus.ca.flight.reservation.model.Flight;
-import com.tus.ca.flight.reservation.model.FlightReservationContext;
+import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.service.FlightService;
 
 import java.time.DayOfWeek;
@@ -16,13 +16,13 @@ public class FlightServiceImpl implements FlightService {
     // Creating an empty ArrayList
     public List<Flight> flightList;
 
-    FlightReservationContext flightReservationContext;
+    AppContext flightReservationContext;
 
-    public FlightServiceImpl(FlightReservationContext flightReservationContext) {
+    public FlightServiceImpl(AppContext flightReservationContext) {
          this(flightReservationContext,new ArrayList<>()); // Constructor chaining here is possible because of 'this()' keyword
     }
 
-    public FlightServiceImpl(FlightReservationContext flightReservationContext,List<Flight> flightList) {
+    public FlightServiceImpl(AppContext flightReservationContext, List<Flight> flightList) {
         this.flightReservationContext = flightReservationContext;  //This is an example of constructor overloading
         this.flightList = flightList;
         Flight flightOne = new Flight("AC","Vancouver","Ontaria",103, Arrays.asList(DayOfWeek.MONDAY,DayOfWeek.FRIDAY), LocalTime.of(13,30), LocalTime.of(15,30), LocalDate.of(2024, 1, 1),LocalDate.of(2024, 12, 20), 1);

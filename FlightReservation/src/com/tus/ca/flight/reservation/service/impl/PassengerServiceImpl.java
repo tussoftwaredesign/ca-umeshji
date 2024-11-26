@@ -1,7 +1,7 @@
 package com.tus.ca.flight.reservation.service.impl;
 
 import com.tus.ca.flight.reservation.enums.Gender;
-import com.tus.ca.flight.reservation.model.FlightReservationContext;
+import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.model.Passenger;
 import com.tus.ca.flight.reservation.service.PassengerService;
 
@@ -13,9 +13,9 @@ public class PassengerServiceImpl implements PassengerService {
     // Creating an empty ArrayList
     public List<Passenger> passengerList;
 
-    FlightReservationContext flightReservationContext;
+    AppContext flightReservationContext;
 
-    public PassengerServiceImpl(FlightReservationContext flightReservationContext) {
+    public PassengerServiceImpl(AppContext flightReservationContext) {
         this.passengerList = new ArrayList<>();
         this.flightReservationContext = flightReservationContext;
         Passenger passengerOne = new Passenger(1,"Umeshchand Thakur","umeshchand.thakur@hotmail.com","101-123-456","14 Wingfield Stepaside, Dubin 18",40, Gender.MALE);

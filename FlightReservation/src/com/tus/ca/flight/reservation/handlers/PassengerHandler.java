@@ -1,7 +1,7 @@
 package com.tus.ca.flight.reservation.handlers;
 
 import com.tus.ca.flight.reservation.enums.Gender;
-import com.tus.ca.flight.reservation.model.FlightReservationContext;
+import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.model.Passenger;
 import com.tus.ca.flight.reservation.service.PassengerService;
 import com.tus.ca.flight.reservation.service.impl.PassengerServiceImpl;
@@ -12,7 +12,7 @@ public class PassengerHandler {
 
     PassengerService passengerService;
 
-    public PassengerHandler(FlightReservationContext flightReservationContext) {
+    public PassengerHandler(AppContext flightReservationContext) {
         passengerService = new PassengerServiceImpl(flightReservationContext);
     }
 
