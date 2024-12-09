@@ -1,9 +1,9 @@
-package com.tus.ca.flight.reservation.service.impl;
+package com.tus.ca.flight.reservation.service;
 
 import com.tus.ca.flight.reservation.enums.BookingClass;
 import com.tus.ca.flight.reservation.exceptions.RouteNotFound;
+import com.tus.ca.flight.reservation.handlers.PaymentHandler;
 import com.tus.ca.flight.reservation.model.*;
-import com.tus.ca.flight.reservation.service.BookingService;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -30,7 +30,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public String makeBooking(Integer flightId,String origin, String destination, LocalDate dateOfJourney, int noOfSeats, List<Integer> passengerIdList, PaymentMethod paymentMethod, BookingClass bookingClass) {
+    public String makeBooking(Integer flightId, String origin, String destination, LocalDate dateOfJourney, int noOfSeats, List<Integer> passengerIdList, PaymentHandler paymentMethod, BookingClass bookingClass) {
 
         final List<Passenger> allPassengers = appContext.getList("passengers", Passenger.class);
         final List<Passenger> passengerList = allPassengers.stream().filter(passenger -> passengerIdList.stream().anyMatch(passengerId -> equals(passenger.getPassengerId()))).toList();
@@ -38,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = new Booking(flightId,dateOfJourney,bookingClass,origin,destination,noOfSeats,passengerList,paymentMethod,bookingId);
         List<Booking> bookings = appContext.getList("bookings", Booking.class);
-        if(bookings !=null){
+        if(bookings != null){
             appContext.getList("bookings", Booking.class).add(booking);
         } else {
             appContext.addList("bookings", List.of(booking));

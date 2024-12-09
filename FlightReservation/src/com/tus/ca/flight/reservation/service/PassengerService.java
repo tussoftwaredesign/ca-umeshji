@@ -4,7 +4,7 @@ import com.tus.ca.flight.reservation.model.Passenger;
 
 import java.util.List;
 
-public interface PassengerService {
+public sealed interface PassengerService permits PassengerServiceImpl {
     public void addPassenger(Passenger passenger);
 
     public void deletePassenger(Integer passengerId);
@@ -22,6 +22,11 @@ public interface PassengerService {
     }
 
     public static void displayPassengers(List<Passenger> allPassenger ) {
+        allPassenger.stream().forEach(System.out::println);  //method reference feature (Reference to a static Method)
+    }
+
+    public static void displayPassengers(List<Passenger> allPassenger, String headerText) { //example of polymorphism feature (method overriding)
+        System.out.println(headerText);
         allPassenger.stream().forEach(System.out::println);
     }
 }

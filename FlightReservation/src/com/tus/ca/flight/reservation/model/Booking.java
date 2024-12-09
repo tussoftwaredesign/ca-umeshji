@@ -1,6 +1,7 @@
 package com.tus.ca.flight.reservation.model;
 
 import com.tus.ca.flight.reservation.enums.BookingClass;
+import com.tus.ca.flight.reservation.handlers.PaymentHandler;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,11 +15,11 @@ public class Booking {
     private String destination;
     private int noOfSeats;
     private final List<Passenger> passengerList;
-    private PaymentMethod paymentMethod;
+    private PaymentHandler paymentMethod;
     private String bookingId;
     boolean bookingStatus;
 
-    public Booking(int flightNumber, LocalDate dataOfJourney, BookingClass bookingClass, String origin, String destination, int noOfSeats, List<Passenger> passengerList, PaymentMethod paymentMethod, String bookingId) {
+    public Booking(int flightNumber, LocalDate dataOfJourney, BookingClass bookingClass, String origin, String destination, int noOfSeats, List<Passenger> passengerList, PaymentHandler paymentMethod, String bookingId) {
         this.flightNumber = flightNumber;
         this.dataOfJourney = dataOfJourney;
         this.bookingClass = bookingClass;
@@ -83,11 +84,11 @@ public class Booking {
         return passengerList;
     }
 
-    public PaymentMethod getPaymentMethod() {
+    public PaymentHandler getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
+    public void setPaymentMethod(PaymentHandler paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 

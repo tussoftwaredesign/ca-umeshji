@@ -1,14 +1,13 @@
-package com.tus.ca.flight.reservation.service.impl;
+package com.tus.ca.flight.reservation.service;
 
 import com.tus.ca.flight.reservation.enums.Gender;
 import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.model.Passenger;
-import com.tus.ca.flight.reservation.service.PassengerService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PassengerServiceImpl implements PassengerService {
+final public class PassengerServiceImpl implements PassengerService {
 
     // Creating an empty ArrayList
     public List<Passenger> passengerList;
@@ -62,6 +61,6 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public List<Passenger> getAllPassengers() {
-        return flightReservationContext.getList("passengers",Passenger.class);
+        return new ArrayList<>(flightReservationContext.getList("passengers",Passenger.class));  //defensive copy features to prevent modification
     }
 }

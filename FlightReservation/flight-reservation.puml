@@ -1,0 +1,535 @@
+@startuml
+class AppContext {
+  - Map<String, List<?>> data
+
+  + AppContext()
+  + <T> void addList(String key, List<T> list)
+  + <T> List<T> getList(String key, Class<T> clazz)
+  + boolean hasList(String key)
+  + void removeList(String key)
+}
+
+interface Map {
+}
+
+interface List {
+}
+
+AppContext o-- "1" Map : data
+Map ..> List
+class Booking {
+  - int flightNumber
+  - LocalDate dataOfJourney
+  - BookingClass bookingClass
+  - String origin
+  - String destination
+  - int noOfSeats
+  - List<Passenger> passengerList
+  - PaymentHandler paymentMethod
+  - String bookingId
+  - boolean bookingStatus
+
+  + Booking(int flightNumber, LocalDate dataOfJourney, BookingClass bookingClass, String origin, String destination, int noOfSeats, List<Passenger> passengerList, PaymentHandler paymentMethod, String bookingId)
+  + int getFlightNumber()
+  + void setFlightNumber(int flightNumber)
+  + LocalDate getDataOfJourney()
+  + void setDataOfJourney(LocalDate dataOfJourney)
+  + BookingClass getBookingClass()
+  + void setBookingClass(BookingClass bookingClass)
+  + String getOrigin()
+  + void setOrigin(String origin)
+  + String getDestination()
+  + void setDestination(String destination)
+  + int getNoOfSeats()
+  + void setNoOfSeats(int noOfSeats)
+  + List<Passenger> getPassengerList()
+  + PaymentHandler getPaymentMethod()
+  + void setPaymentMethod(PaymentHandler paymentMethod)
+  + String getBookingId()
+  + void setBookingId(String bookingId)
+  + boolean isBookingStatus()
+  + void setBookingStatus(boolean bookingStatus)
+  + boolean equals(Object o)
+  + int hashCode()
+  + String toString()
+}
+
+enum BookingClass {
+}
+
+class PaymentHandler {
+}
+
+class Passenger {
+}
+
+Booking --> "1" BookingClass
+Booking --> "1" PaymentHandler
+Booking --> "*" Passenger
+
+enum BookingClass {
+  Business
+  Economy
+}
+class BookingHandler {
+  - BookingService bookingService
+  - AppContext appContext
+
+  + BookingHandler(AppContext appContext)
+  + void bookingServiceMenu()
+  + Invoice generateInvoice(BigDecimal paymentAmount, Integer noOfPassenger, List<Integer> passengerIdList)
+  - String generateUniqueInvoiceId()
+  + String derivePassengerName(Integer passengerId)
+}
+
+interface BookingService {
+}
+
+class BookingServiceImpl {
+}
+
+class AppContext {
+}
+
+class Invoice {
+}
+
+class Passenger {
+}
+
+class PaymentHandler {
+}
+
+enum BookingClass {
+}
+
+BookingHandler o-- BookingService
+BookingHandler o-- AppContext
+BookingHandler ..> Invoice
+BookingHandler ..> Passenger
+BookingHandler ..> PaymentHandler
+BookingHandler ..> BookingClass
+BookingService <|.. BookingServiceImpl
+
+interface BookingService {
+  + boolean searchRoutes(String origin, String destination, LocalDate dateOfJourney)
+  + String makeBooking(Integer flightId, String origin, String destination, LocalDate dateOfJourney, int noOfSeats, List<Integer> passengerIdList, PaymentHandler paymentMethod, BookingClass bookingClass)
+  + List<Booking> listAllBookings()
+  + void cancelBooking(String bookingId)
+}
+
+class LocalDate {
+}
+
+class PaymentHandler {
+}
+
+enum BookingClass {
+}
+
+class Booking {
+}
+
+BookingService ..> LocalDate
+BookingService ..> PaymentHandler
+BookingService ..> BookingClass
+BookingService ..> Booking
+
+class BookingServiceImpl {
+  - AppContext appContext
+
+  + BookingServiceImpl(AppContext flightReservationContext)
+  + boolean searchRoutes(String origin, String destination, LocalDate dateOfJourney)
+  + String makeBooking(Integer flightId, String origin, String destination, LocalDate dateOfJourney, int noOfSeats, List<Integer> passengerIdList, PaymentHandler paymentMethod, BookingClass bookingClass)
+  + List<Booking> listAllBookings()
+  + void cancelBooking(String bookingId)
+  - String generateUniqueBookingId()
+  - boolean searchFlightDetails(String origin, String destination, LocalDate dateOfJourney, List<Flight> allFlights) throws RouteNotFound
+}
+
+interface BookingService {
+}
+
+class AppContext {
+}
+
+class Booking {
+  + String getBookingId()
+  + void setBookingStatus(boolean status)
+}
+
+class Flight {
+  + String getOrigin()
+  + String getDestination()
+  + LocalDate getEffectStartDate()
+  + LocalDate getEffectEndDate()
+}
+
+class PaymentHandler {
+}
+
+enum BookingClass {
+}
+
+class RouteNotFound extends Exception {
+  + RouteNotFound(String message)
+}
+
+BookingServiceImpl ..|> BookingService
+BookingServiceImpl o-- AppContext
+BookingServiceImpl ..> Booking
+BookingServiceImpl ..> Flight
+BookingServiceImpl ..> PaymentHandler
+BookingServiceImpl ..> RouteNotFound
+
+class CreditCardPayment {
+  + void process(BigDecimal amount, String currency)
+}
+
+class Payment {
+  + void process(BigDecimal amount, String currency)
+}
+
+CreditCardPayment ..|> Payment
+
+class Flight {
+  - String carrierCode
+  - int flightNumber
+  - String origin
+  - String destination
+  - List<DayOfWeek> frequencies
+  - LocalTime departureTime
+  - LocalTime arrivalTime
+  - LocalDate effectStartDate
+  - LocalDate effectEndDate
+  - int routeId
+
+  + Flight(String carrierCode, String origin, String destination, int flightNumber, List<DayOfWeek> frequencies, LocalTime departureTime, LocalTime arrivalTime, LocalDate effectStartDate, LocalDate effectEndDate, int routeId)
+  + String getCarrierCode()
+  + void setCarrierCode(String carrierCode)
+  + int getFlightNumber()
+  + void setFlightNumber(int flightNumber)
+  + String getOrigin()
+  + void setOrigin(String origin)
+  + String getDestination()
+  + void setDestination(String destination)
+  + List<DayOfWeek> getFrequencies()
+  + void setFrequencies(List<DayOfWeek> frequencies)
+  + LocalTime getDepartureTime()
+  + void setDepartureTime(LocalTime departureTime)
+  + LocalTime getArrivalTime()
+  + void setArrivalTime(LocalTime arrivalTime)
+  + LocalDate getEffectStartDate()
+  + void setEffectStartDate(LocalDate effectStartDate)
+  + LocalDate getEffectEndDate()
+  + void setEffectEndDate(LocalDate effectEndDate)
+  + void setRouteId(int routeId)
+  + int getRouteId()
+  + boolean equals(Object o)
+  + int hashCode()
+  + String toString()
+}
+
+enum DayOfWeek {
+}
+
+Flight --> "*" DayOfWeek : frequencies
+class FlightHandler {
+  - FlightService flightService
+
+  + FlightHandler(AppContext flightReservationContext)
+  + void flightServiceMenu()
+}
+
+interface FlightService {
+  + void addFlight(Flight flight)
+  + Flight searchFlight(int flightNumber)
+  + void updateFlight(Flight flight)
+  + void deleteFlight(int flightNumber)
+  + void displayAllFlight(List<Flight> flights)
+  + List<Flight> getAllFlights()
+}
+
+class AppContext {
+}
+
+class Flight {
+  + void setDepartureTime(LocalTime time)
+  + void setArrivalTime(LocalTime time)
+}
+
+class DayOfWeek {
+}
+
+class LocalDate {
+}
+
+class LocalTime {
+}
+
+FlightHandler o-- FlightService
+FlightHandler o-- AppContext
+FlightHandler ..> Flight
+FlightHandler ..> LocalDate
+FlightHandler ..> LocalTime
+FlightHandler ..> DayOfWeek
+
+class FlightReservationApp {
+  - FlightHandler flightHandler
+  - PassengerHandler passengerHandler
+  - BookingHandler bookingHandler
+  - AppContext flightReservationContext
+
+  + FlightReservationApp()
+  + static void main(String[] args)
+  + void startProcessing()
+}
+
+class FlightHandler {
+  + void flightServiceMenu()
+}
+
+class PassengerHandler {
+  + void passengerServiceMenu()
+}
+
+class BookingHandler {
+  + void bookingServiceMenu()
+}
+
+class AppContext {
+}
+
+FlightReservationApp o-- FlightHandler
+FlightReservationApp o-- PassengerHandler
+FlightReservationApp o-- BookingHandler
+FlightReservationApp o-- AppContext
+
+interface FlightService {
+  + void addFlight(Flight flight)
+  + void deleteFlight(Integer flightNumber)
+  + void updateFlight(Flight flight)
+  + Flight searchFlight(int flightNumber)
+  + List<Flight> getAllFlights()
+  + default void displayAllFlight(List<Flight> allFlights)
+  + static void displayFlight(List<Flight> allFlights)
+  - void generateDecorator()
+}
+
+class Flight {
+}
+
+FlightService ..> Flight
+
+class FlightServiceImpl {
+  - List<Flight> flightList
+  - AppContext flightReservationContext
+
+  + FlightServiceImpl(AppContext flightReservationContext)
+  + FlightServiceImpl(AppContext flightReservationContext, List<Flight> flightList)
+  + void addFlight(Flight flight)
+  + void deleteFlight(Integer flightNumber)
+  + void updateFlight(Flight flight)
+  + Flight searchFlight(int flightNumber)
+  + List<Flight> getAllFlights()
+}
+
+class AppContext {
+  + void addList(String key, List<Flight> list)
+}
+
+class Flight {
+  + int getFlightNumber()
+}
+
+interface FlightService {
+  + void addFlight(Flight flight)
+  + void deleteFlight(Integer flightNumber)
+  + void updateFlight(Flight flight)
+  + Flight searchFlight(int flightNumber)
+  + List<Flight> getAllFlights()
+}
+
+FlightServiceImpl ..|> FlightService
+FlightServiceImpl o-- AppContext
+FlightServiceImpl ..> Flight
+enum Gender {
+    MALE
+    FEMALE
+}
+class Invoice {
+    - String invoiceNumber
+    - LocalDate issueDate
+    - String customerName
+    - BigDecimal totalAmount
+    - List<InvoiceItem> invoiceItems
+
+    + Invoice(String invoiceNumber, LocalDate issueDate, String customerName, BigDecimal totalAmount, List<InvoiceItem> invoiceItems)
+    + String getInvoiceNumber()
+    + LocalDate getIssueDate()
+    + String getCustomerName()
+    + BigDecimal getTotalAmount()
+    + List<InvoiceItem> getInvoiceItems()
+    + boolean equals(Object o)
+    + int hashCode()
+    + String toString()
+}
+
+class InvoiceItem {
+    - int quantity
+    - BigDecimal unitPrice
+
+    + InvoiceItem(int quantity, BigDecimal unitPrice)
+    + int getQuantity()
+    + BigDecimal getUnitPrice()
+    + boolean equals(Object o)
+    + int hashCode()
+    + String toString()
+}
+
+Invoice o-- "1..*" InvoiceItem : contains
+
+class Passenger {
+  + Integer passengerId
+  + String passengerName
+  + String passengerEmail
+  - String passengerPhoneNumber
+  - String passengerAddress
+  - Integer passengerAge
+  - Gender passengerGender
+
+  + Passenger(Integer passengerId, String passengerName, String passengerEmail, String passengerPhoneNumber, String passengerAddress, Integer passengerAge, Gender passengerGender)
+  + Integer getPassengerId()
+  + void setPassengerId(Integer passengerId)
+  + String getPassengerName()
+  + void setPassengerName(String passengerName)
+  + String getPassengerEmail()
+  + void setPassengerEmail(String passengerEmail)
+  + String getPassengerPhoneNumber()
+  + void setPassengerPhoneNumber(String passengerPhoneNumber)
+  + String getPassengerAddress()
+  + void setPassengerAddress(String passengerAddress)
+  + Integer getPassengerAge()
+  + void setPassengerAge(Integer passengerAge)
+  + Gender getPassengerGender()
+  + void setPassengerGender(Gender passengerGender)
+  + boolean equals(Object o)
+  + int hashCode()
+  + String toString()
+}
+
+enum Gender {
+}
+
+Passenger --> "1" Gender : passengerGender
+class PassengerHandler {
+    - PassengerService passengerService
+
+    + PassengerHandler(AppContext flightReservationContext)
+    + void passengerServiceMenu()
+}
+
+interface PassengerService {
+    + void addPassenger(Passenger passenger)
+    + void updatePassenger(Passenger passenger)
+    + void deletePassenger(int passengerId)
+    + Passenger searchPassenger(int passengerId)
+    + List<Passenger> getAllPassengers()
+    + void displayAllPassengers(List<Passenger> passengers)
+}
+
+class AppContext {
+}
+
+class Passenger {
+    + void setPassengerEmail(String email)
+    + void setPassengerPhoneNumber(String phoneNumber)
+}
+
+class Gender {
+}
+
+PassengerHandler o-- PassengerService
+PassengerHandler o-- AppContext
+PassengerHandler ..> Passenger
+PassengerHandler ..> Gender
+
+interface PassengerService implements PassengerServiceImpl {
+    + void addPassenger(Passenger passenger)
+    + void deletePassenger(Integer passengerId)
+    + void updatePassenger(Passenger passenger)
+    + Passenger searchPassenger(int passengerId)
+    + List<Passenger> getAllPassengers()
+    + default void displayAllPassengers(List<Passenger> allPassenger)
+    + static void displayPassengers(List<Passenger> allPassenger)
+    + static void displayPassengers(List<Passenger> allPassenger, String headerText)
+}
+
+class Passenger {
+}
+
+PassengerService ..> Passenger
+
+class PassengerServiceImpl {
+    - List<Passenger> passengerList
+    - AppContext flightReservationContext
+
+    + PassengerServiceImpl(AppContext flightReservationContext)
+    + void addPassenger(Passenger passenger)
+    + void deletePassenger(Integer passengerId)
+    + void updatePassenger(Passenger passenger)
+    + Passenger searchPassenger(int passengerId)
+    + List<Passenger> getAllPassengers()
+}
+
+class AppContext {
+    + void addList(String key, List<Passenger> list)
+    + List<Passenger> getList(String key, Class<Passenger> clazz)
+}
+
+class Passenger {
+    + int getPassengerId()
+}
+
+enum Gender {
+    MALE,
+    FEMALE
+}
+
+PassengerServiceImpl ..|> PassengerService
+PassengerServiceImpl o-- AppContext
+PassengerServiceImpl ..> Passenger
+PassengerServiceImpl ..> Gender
+
+
+class Payment {
+  + process(BigDecimal amount, String currency): void
+}
+class RouteNotFound {
+    + RouteNotFound(String message)
+}
+
+class Exception {
+    + Exception(String message)
+}
+
+RouteNotFound ..|> Exception
+
+class PaymentHandler {
+    - String paymentId
+    - BigDecimal amount
+    - String currency
+    - LocalDateTime timestamp
+    - Payment payment
+
+    + PaymentHandler(String paymentId, BigDecimal amount, String currency, LocalDateTime timestamp, Payment payment)
+    + void makePayment()
+}
+
+class Payment {
+    + void process(BigDecimal amount, String currency)
+}
+
+PaymentHandler ..> Payment
+
+@enduml

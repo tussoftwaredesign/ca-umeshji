@@ -4,26 +4,28 @@ package com.tus.ca.flight.reservation.handlers;
 import com.tus.ca.flight.reservation.enums.BookingClass;
 import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.model.Booking;
-import com.tus.ca.flight.reservation.model.PaymentMethod;
+import com.tus.ca.flight.reservation.model.Invoice;
+import com.tus.ca.flight.reservation.model.Passenger;
 import com.tus.ca.flight.reservation.service.BookingService;
+import com.tus.ca.flight.reservation.service.BookingServiceImpl;
 import com.tus.ca.flight.reservation.service.CreditCardPayment;
 import com.tus.ca.flight.reservation.service.Payment;
-import com.tus.ca.flight.reservation.service.impl.BookingServiceImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class BookingHandler {
 
     BookingService bookingService;
 
-    public BookingHandler(AppContext flightReservationContext){
-        bookingService = new BookingServiceImpl(flightReservationContext);
+    AppContext appContext;
+
+    public BookingHandler(AppContext appContext){
+        bookingService = new BookingServiceImpl(appContext);
+        this.appContext = appContext;
     }
 
     public void bookingServiceMenu() {
@@ -61,7 +63,7 @@ public class BookingHandler {
                         BookingClass bookingClass = BookingClass.valueOf(in.nextLine());
                         var passengerIdList = new ArrayList<Integer>();  // Using LVTI , the compiler infer the type of the variable passengerIdList
                         for(int i=0;i<noOfPassengers;i++){
-                            System.out.println("Provide passengerId for " + (i+1) + "passenger");
+                            System.out.println("Provide passengerId for " + (i+1) + " passenger");
                             int passengerId = in.nextInt();
                             passengerIdList.add(passengerId);
                             in.nextLine();
@@ -72,10 +74,12 @@ public class BookingHandler {
                         System.out.println("Provide Payment Currency");
                         String paymentCurr = in.nextLine();
                         Payment creditCardPayment = new CreditCardPayment();
-                        PaymentMethod paymentMethod = new PaymentMethod(String.valueOf(System.nanoTime()),paymentAmount,paymentCurr, LocalDateTime.now(),creditCardPayment);
+                        PaymentHandler paymentMethod = new PaymentHandler(String.valueOf(System.nanoTime()),paymentAmount,paymentCurr, LocalDateTime.now(),creditCardPayment);
                         paymentMethod.makePayment();
                         String bookingId = bookingService.makeBooking(flightId,origin,destination,dateOfJourney,noOfPassengers,passengerIdList,paymentMethod,bookingClass);
+                        Invoice invoice = generateInvoice(paymentAmount,noOfPassengers,passengerIdList);
                         System.out.println("Booking confirmed with bookingId :: " + bookingId);
+                        System.out.println("Invoice :: " + invoice.toString());
                     }
                     break;
                 case 3: System.out.println("Provide BookingId you wish to remove");
@@ -92,9 +96,32 @@ public class BookingHandler {
                 default:
                     StringBuilder errorMsg = new StringBuilder();
                     errorMsg.append("Invalid Input Provided for Booking Service Menu");
-                    errorMsg.append("Please try again choosing option from the menu below");
+                    errorMsg.append("Please try again choosing option from the menu below"); //StringBuilder feature example
                     System.out.println(errorMsg);
             }
         }
+    }
+
+    public Invoice generateInvoice(BigDecimal paymentAmount,Integer noOfPassenger,List<Integer> passengerIdList) {
+        String invoiceId = generateUniqueInvoiceId();
+        String passengerName = derivePassengerName(passengerIdList.get(0));
+        Invoice.InvoiceItem invoiceItem = new Invoice.InvoiceItem(noOfPassenger,paymentAmount.divide(BigDecimal.valueOf(noOfPassenger)));
+        return new Invoice(invoiceId,LocalDate.now(),passengerName,paymentAmount,List.of(invoiceItem));
+    }
+
+    private String generateUniqueInvoiceId() {
+        long timestamp = System.currentTimeMillis();
+        int randomNum = new Random().nextInt(1000);
+        return  "Invoice-" + timestamp + "-" + randomNum;
+    }
+
+
+    public String derivePassengerName(Integer passengerId) {
+        final List<Passenger> passengers = appContext.getList("passengers", Passenger.class);
+        Passenger passenger = passengers.stream()
+                .filter(p -> p.getPassengerId().equals(passengerId))
+                .findFirst()
+                .orElse(null);
+        return passenger!= null ? passenger.getPassengerName():"";
     }
 }

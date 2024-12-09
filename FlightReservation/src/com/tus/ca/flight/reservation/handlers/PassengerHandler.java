@@ -4,7 +4,7 @@ import com.tus.ca.flight.reservation.enums.Gender;
 import com.tus.ca.flight.reservation.model.AppContext;
 import com.tus.ca.flight.reservation.model.Passenger;
 import com.tus.ca.flight.reservation.service.PassengerService;
-import com.tus.ca.flight.reservation.service.impl.PassengerServiceImpl;
+import com.tus.ca.flight.reservation.service.PassengerServiceImpl;
 
 import java.util.Scanner;
 

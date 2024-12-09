@@ -1,8 +1,7 @@
-package com.tus.ca.flight.reservation.service.impl;
+package com.tus.ca.flight.reservation.service;
 
-import com.tus.ca.flight.reservation.model.Flight;
 import com.tus.ca.flight.reservation.model.AppContext;
-import com.tus.ca.flight.reservation.service.FlightService;
+import com.tus.ca.flight.reservation.model.Flight;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
