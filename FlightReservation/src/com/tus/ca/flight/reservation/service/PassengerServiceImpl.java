@@ -25,8 +25,8 @@ final public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public void addPassenger(Passenger passenger) {
-        passengerList.add(passenger);
+    public void addPassenger(Passenger... passenger) {   // example of varargs
+        passengerList.addAll(List.of(passenger));
         flightReservationContext.addList("passengers", passengerList);
         System.out.println("Added Passenger Successfully");
     }
@@ -61,6 +61,7 @@ final public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public List<Passenger> getAllPassengers() {
+        // Return a defensive copy when accessing all the passengers
         return new ArrayList<>(flightReservationContext.getList("passengers",Passenger.class));  //defensive copy features to prevent modification
     }
 }

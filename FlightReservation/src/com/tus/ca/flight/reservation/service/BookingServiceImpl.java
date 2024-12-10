@@ -15,7 +15,7 @@ public class BookingServiceImpl implements BookingService {
     AppContext appContext;
 
     public BookingServiceImpl(AppContext flightReservationContext){
-        this.appContext = flightReservationContext; // used here to refer the instance variable i.e (flightReservationContext)
+        this.appContext = flightReservationContext; // this used here to refer the instance variable i.e (appContext)
     }
     @Override
     public boolean searchRoutes(String origin, String destination, LocalDate dateOfJourney) {

@@ -17,7 +17,6 @@ public class PassengerHandler {
     }
 
     public  void passengerServiceMenu() {
-        //System.out.println("Passenger Service Menu");
         boolean shouldRun = true;
         while (shouldRun) {
             System.out.println("Passenger Service Menu");

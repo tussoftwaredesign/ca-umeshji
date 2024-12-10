@@ -25,6 +25,7 @@ public interface FlightService {
     }
 
     public static void displayFlight(List<Flight> allFlights ) {
+        // Using method reference (Reference to a Static Method)
         allFlights.stream().forEach(System.out::println);
     }
 

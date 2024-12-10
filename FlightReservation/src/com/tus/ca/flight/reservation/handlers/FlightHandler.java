@@ -50,7 +50,7 @@ public class FlightHandler {
                     int flightNumber = in.nextInt();
                     in.nextLine();
                     System.out.println("Provide flight frequencies :");
-                    List<DayOfWeek> frequencies = Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.FRIDAY);
+                    List<DayOfWeek> frequencies = Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.FRIDAY); // converts an array into List
                     in.nextLine();
                     System.out.println("Provide flight departureTime in format (HH.mm) :");
                     LocalTime departureTime = LocalTime.parse(in.nextLine(), formatterTime);
