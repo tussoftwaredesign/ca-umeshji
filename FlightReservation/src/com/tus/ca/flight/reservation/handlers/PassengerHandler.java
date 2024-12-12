@@ -48,7 +48,7 @@ public class PassengerHandler {
                     Integer passengerAge = in.nextInt();
                     in.nextLine();
                     System.out.println("Provide Passenger Gender :");
-                    Gender passengerGender = Gender.valueOf(in.nextLine());
+                    Gender passengerGender = Gender.valueOf(in.nextLine().toUpperCase());
                     Passenger passenger = new Passenger(passengerId,passengerName,passengerEmail,passengerPhone,passengerAddress,passengerAge ,passengerGender);
                     passengerService.addPassenger(passenger);
                     break;

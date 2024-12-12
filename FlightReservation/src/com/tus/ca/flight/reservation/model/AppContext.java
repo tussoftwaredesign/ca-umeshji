@@ -31,4 +31,12 @@ public class AppContext {
     public void removeList(String key) {
         data.remove(key);
     }
+
+    /*
+        Holds app data in the form of <key, List<T>
+        e.g.
+            bookings, List.of(booking)
+            passengers, List.of(passenger)
+            flights, List.of(flights)
+    */
 }

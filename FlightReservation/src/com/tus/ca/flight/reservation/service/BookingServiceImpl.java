@@ -88,7 +88,9 @@ public class BookingServiceImpl implements BookingService {
         if(flights.isEmpty()){
             throw new RouteNotFound("No route found");
         } else {
+            System.out.println("Searched route starts");
             flights.stream().forEach(System.out::println);
+            System.out.println("Searched route ends");
             isPresent = true;
         }
         return isPresent;

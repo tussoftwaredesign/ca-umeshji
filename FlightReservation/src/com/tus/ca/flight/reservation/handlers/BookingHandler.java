@@ -31,7 +31,7 @@ public class BookingHandler {
     public void bookingServiceMenu() {
         boolean shouldRun = true;
         while (shouldRun) {
-            System.out.println("Flight Service Menu");
+            System.out.println("Booking Service Menu");
             System.out.println("====================");
             System.out.println("1. Search Route");
             System.out.println("2. Add Booking");
@@ -81,17 +81,23 @@ public class BookingHandler {
                         System.out.println("Booking confirmed with bookingId :: " + bookingId);
                         System.out.println("Invoice :: " + invoice.toString());
                     }
-                    break;
+                        break;
                 case 3: System.out.println("Provide BookingId you wish to remove");
                         String bookingId =  in.nextLine();
                         bookingService.cancelBooking(bookingId);
+                        break;
                 case 4:
                         List<Booking> bookingsList = bookingService.listAllBookings();
                         if(bookingsList.isEmpty()) {
                             System.out.println("No Bookings Found");
                         } else {
+                            System.out.println("Bookings List starts");
                             bookingsList.stream().forEach(System.out::println);
+                            System.out.println("Bookings List ends");
                         }
+                        break;
+                case 5:
+                        shouldRun = false;
                         break;
                 default:
                     StringBuilder errorMsg = new StringBuilder();
