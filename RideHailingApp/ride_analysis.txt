@@ -1,0 +1,3 @@
+--- Ride Analysis ---
+RideRequest[rideId=R1, userId=U1, driverId=D1, rideTime=2025-03-30T20:55:16.203435100, rideStatus=REQUESTED]
+RideCompletion[rideId=R1, userId=U1, driverId=D1, rideTime=2025-03-30T20:55:16.203435100, fare=25.0, rideStatus=COMPLETED]

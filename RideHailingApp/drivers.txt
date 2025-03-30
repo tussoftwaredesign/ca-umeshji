@@ -1,0 +1,4 @@
+D1,John Doe,Sedan,4.8
+D2,Jane Smith,SUV,4.9
+D3,Alice Johnson,Bike,4.7
+D4,Robert Brown,Sedan,4.6

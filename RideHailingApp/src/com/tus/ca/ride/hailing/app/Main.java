@@ -1,38 +1,53 @@
 package com.tus.ca.ride.hailing.app;
 
+import com.tus.ca.ride.hailing.enums.RideStatus;
 import com.tus.ca.ride.hailing.exceptions.ExceptionHandler;
+import com.tus.ca.ride.hailing.handler.RideAnalyzer;
 import com.tus.ca.ride.hailing.model.Driver;
 import com.tus.ca.ride.hailing.service.Ride;
 import com.tus.ca.ride.hailing.service.RideCompletion;
 import com.tus.ca.ride.hailing.service.RideRequest;
+import com.tus.ca.ride.hailing.util.DirectoryUtility;
+import com.tus.ca.ride.hailing.util.ExceptionUtility;
+import com.tus.ca.ride.hailing.util.FileUtility;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
     /**
      * Main class for the Ride Hailing application.
      * Simulates ride requests, ride completions, and analyzes rides using Stream APIs.
      */
     public class Main {
+        // Define a DateTimeFormatter for consistent formatting
+        private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        private final List<Ride> rides = new ArrayList<>();
+        private final Locale userLocale = Locale.getDefault(); // Get user's locale
+        private ResourceBundle messages = ResourceBundle.getBundle("resources/messages", Locale.forLanguageTag("fr"));
         private final ExecutorService executor = Executors.newFixedThreadPool(4);
-        private final List<Driver> drivers = List.of(
-                new Driver("D1", "John Doe", "Sedan", 4.8),
-                new Driver("D2", "Jane Smith", "SUV", 4.9),
-                new Driver("D3", "Alice Johnson", "Bike", 4.7)
-        );
         private final ExceptionHandler exceptionHandler = new ExceptionHandler();
+        protected Path logPath = Path.of("/var/opt/data/logs"); // Change this path as needed
+        private List<Ride> rides;
+        private List<Driver> drivers;
+        private RideAnalyzer rideAnalyzer;
+
+        public Main() {
+            // Initialize rides and drivers
+            this.rides = new ArrayList<>();
+            this.drivers = FileUtility.readDriversFromFile("drivers.txt");
+            this.rideAnalyzer = new RideAnalyzer(rides, drivers);
+        }
 
         public static void main(String[] args) {
             new Main().run();
@@ -42,13 +57,15 @@ import java.util.stream.Collectors;
          * Entry point to run the application.
          */
         public void run() {
+
             // Validate driver IDs using Predicate
             Predicate<String> isDriverValid = driverId -> drivers.stream()
                     .anyMatch(driver -> driver.driverId().equals(driverId));
 
             // Suppliers to generate ride requests and completions dynamically
-            Supplier<RideRequest> createRideRequest = () -> new RideRequest("R1", "U1", "D1", LocalDateTime.now());
-            Supplier<RideCompletion> createRideCompletion = () -> new RideCompletion("R1", "U1", "D1", LocalDateTime.now(), 25.0);
+            Supplier<RideRequest> createRideRequest = () -> new RideRequest("R1", "U1", "D1", LocalDateTime.now(), RideStatus.REQUESTED);
+            Supplier<RideCompletion> createRideCompletion = () -> new RideCompletion("R1", "U1", "D1", LocalDateTime.now(), 25.0, RideStatus.COMPLETED);
+
 
             // Consumer to process and validate rides
             Consumer<Ride> processRide = ride -> {
@@ -62,11 +79,11 @@ import java.util.stream.Collectors;
             // Tasks for concurrent ride processing
             List<Callable<Void>> tasks = List.of(
                     () -> {
-                        exceptionHandler.executeSafely(() -> processRide.accept(createRideRequest.get()), "RideRequest R1", this::logException);
+                        exceptionHandler.executeSafely(() -> processRide.accept(createRideRequest.get()), "RideRequest R1", ExceptionUtility::logException);
                         return null;
                     },
                     () -> {
-                        exceptionHandler.executeSafely(() -> processRide.accept(createRideCompletion.get()), "RideCompletion R1", this::logException);
+                        exceptionHandler.executeSafely(() -> processRide.accept(createRideCompletion.get()), "RideCompletion R1", ExceptionUtility::logException);
                         return null;
                     }
             );
@@ -75,7 +92,17 @@ import java.util.stream.Collectors;
             executeTasks(tasks);
 
             // Analyze rides after processing
+            System.out.println("Message: " + messages.getString("ride.analysis.start"));
             analyzeRides();
+
+            // Write ride data to a file
+            FileUtility.writeRidesToFile("ride_analysis.txt",rides);
+
+            // list and watch a directory
+            DirectoryUtility utility = new DirectoryUtility();
+            utility.listFilesInDirectory(".");
+            utility.watchDirectory(".");
+
         }
 
         /**
@@ -86,9 +113,14 @@ import java.util.stream.Collectors;
         private void executeTasks(List<Callable<Void>> tasks) {
             try {
                 executor.invokeAll(tasks);
-            } catch (InterruptedException e) {
-                exceptionHandler.handleException(this::logException, e);
-                Thread.currentThread().interrupt();
+            } catch (Exception  e) {
+                switch (e) {
+                    case InterruptedException _ -> {
+                        exceptionHandler.handleException(ExceptionUtility::logException, e);
+                        Thread.currentThread().interrupt();
+                    }
+                    default -> ExceptionUtility.logException(e);
+                }
             } finally {
                 shutdownExecutor();
             }
@@ -105,128 +137,39 @@ import java.util.stream.Collectors;
                     executor.shutdownNow();
                 }
             } catch (InterruptedException e) {
-                logException(e);
+                ExceptionUtility.logException(e);
                 executor.shutdownNow();
                 Thread.currentThread().interrupt();
             }
         }
 
         /**
-         * Logs exceptions with context.
-         *
-         * @param e The exception to log
-         */
-        private void logException(Exception e) {
-            System.err.println("An error occurred: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        /**
          * Analyzes and summarizes ride data using Stream APIs.
          */
         private void analyzeRides() {
-            System.out.println("\n--- Ride Analysis ---");
+            // Simulate ride processing
+            LocalDateTime startDate = LocalDateTime.now().minusDays(1);
+            LocalDateTime endDate = LocalDateTime.now();
+            rideAnalyzer.displayFormattedRideTimes();
+            rideAnalyzer.groupRidesByDriver();
+            rideAnalyzer.partitionRides();
+            rideAnalyzer.findRideWithHighestFare();
+            rideAnalyzer.findRideWithLowestFare();
+            rideAnalyzer.countTotalRideRequests();
+            rideAnalyzer.findAnyRide();
+            rideAnalyzer.findFirstRide();
+            rideAnalyzer.validateRides();
+            rideAnalyzer.checkAnyRideByDriver("D1");
+            rideAnalyzer.checkNoRideByDriver("D99");
+            rideAnalyzer.listAllRideTimes();
+            rideAnalyzer.mapDriverIdsToTotalRides();
+            rideAnalyzer.filterDistinctDriverIds();
+            rideAnalyzer.listFirstThreeRides();
+            rideAnalyzer.sortRidesByTime();
+            rideAnalyzer.calculateTimeBetweenRides();
+            rideAnalyzer.filterRidesByDateRange(startDate, endDate); // Filter rides within the last day
+            rideAnalyzer.displayRideTimesInTimeZone("Europe/Dublin");
 
-            // 1. Group rides by driver ID
-            System.out.println("Grouping rides by driver...");
-            Map<String, List<Ride>> ridesByDriver = rides.stream()
-                    .collect(Collectors.groupingBy(Ride::driverId));
-            System.out.println("Rides grouped by driver: " + ridesByDriver);
-
-            // 2. Partition rides into RideRequests and RideCompletions
-            System.out.println("\nPartitioning rides into requests and completions...");
-            Map<Boolean, List<Ride>> partitionedRides = rides.stream()
-                    .collect(Collectors.partitioningBy(r -> r instanceof RideRequest));
-            System.out.println("Partitioned rides: " + partitionedRides);
-
-            // 3. Find the ride with the highest fare
-            System.out.println("\nFinding the ride with the highest fare...");
-            rides.stream()
-                    .filter(r -> r instanceof RideCompletion)
-                    .map(r -> (RideCompletion) r)
-                    .max(Comparator.comparing(RideCompletion::fare))
-                    .ifPresent(r -> System.out.println("Highest fare ride: " + r));
-
-            // 4. Find the ride with the lowest fare
-            System.out.println("\nFinding the ride with the lowest fare...");
-            rides.stream()
-                    .filter(r -> r instanceof RideCompletion)
-                    .map(r -> (RideCompletion) r)
-                    .min(Comparator.comparing(RideCompletion::fare))
-                    .ifPresent(r -> System.out.println("Lowest fare ride: " + r));
-
-            // 5. Count total ride requests
-            System.out.println("\nCounting total ride requests...");
-            long totalRideRequests = rides.stream()
-                    .filter(r -> r instanceof RideRequest)
-                    .count();
-            System.out.println("Total ride requests: " + totalRideRequests);
-
-            // 6. Find any ride
-            System.out.println("\nFinding any ride...");
-            rides.stream()
-                    .findAny()
-                    .ifPresent(r -> System.out.println("Found a ride: " + r));
-
-            // 7. Find the first ride
-            System.out.println("\nFinding the first ride...");
-            rides.stream()
-                    .findFirst()
-                    .ifPresent(r -> System.out.println("First ride: " + r));
-
-            // 8. Check if all rides are valid
-            System.out.println("\nValidating rides...");
-            boolean allRidesAreValid = rides.stream()
-                    .allMatch(r -> drivers.stream().anyMatch(d -> d.driverId().equals(r.driverId())));
-            System.out.println("Are all rides valid? " + allRidesAreValid);
-
-            // 9. Check if any ride is by driver "D1"
-            System.out.println("\nChecking if any ride is by driver 'D1'...");
-            boolean anyRideByDriverD1 = rides.stream()
-                    .anyMatch(r -> "D1".equals(r.driverId()));
-            System.out.println("Any ride by driver 'D1': " + anyRideByDriverD1);
-
-            // 10. Check if no ride is by driver "D99"
-            System.out.println("\nChecking if no ride is by driver 'D99'...");
-            boolean noRideByDriverD99 = rides.stream()
-                    .noneMatch(r -> "D99".equals(r.driverId()));
-            System.out.println("No ride by driver 'D99': " + noRideByDriverD99);
-
-            // 11. Display all ride times
-            System.out.println("\nListing all ride times:");
-            rides.stream()
-                    .forEach(r -> System.out.println(r.rideTime()));
-
-            // 12. Map of driver IDs to total rides
-            System.out.println("\nCreating a map of driver ID to total rides...");
-            Map<String, Long> rideCountsByDriver = rides.stream()
-                    .collect(Collectors.toMap(
-                            Ride::driverId,
-                            r -> 1L,
-                            Long::sum
-                    ));
-            System.out.println("Ride counts by driver: " + rideCountsByDriver);
-
-            // 13. Display distinct driver IDs
-            System.out.println("\nFiltering distinct driver IDs...");
-            List<String> distinctDriverIds = rides.stream()
-                    .map(Ride::driverId)
-                    .distinct()
-                    .collect(Collectors.toList());
-            System.out.println("Distinct driver IDs: " + distinctDriverIds);
-
-            // 14. Limit to the first 3 rides
-            System.out.println("\nListing the first 3 rides...");
-            List<Ride> firstThreeRides = rides.stream()
-                    .limit(3)
-                    .collect(Collectors.toList());
-            System.out.println("First three rides: " + firstThreeRides);
-
-            // 15. Sort rides by ride time
-            System.out.println("\nSorting rides by time...");
-            List<Ride> sortedRides = rides.stream()
-                    .sorted(Comparator.comparing(Ride::rideTime))
-                    .collect(Collectors.toList());
-            System.out.println("Rides sorted by time: " + sortedRides);
         }
+
     }
