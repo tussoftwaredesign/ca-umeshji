@@ -42,7 +42,12 @@ public class RideAnalyzer {
     public void partitionRides() {
         System.out.println("\nPartitioning rides into requests and completions...");
         Map<Boolean, List<Ride>> partitionedRides = rides.stream()
-                .collect(Collectors.partitioningBy(r -> r instanceof RideRequest));
+                .collect(Collectors.partitioningBy(
+                        r -> switch(r) {
+                            case RideRequest _ -> true;
+                            case RideCompletion _ -> false;
+                        }
+                ));
         System.out.println("Partitioned rides: " + partitionedRides);
     }
 

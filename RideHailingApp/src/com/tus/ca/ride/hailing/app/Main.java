@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 
         private final Locale userLocale = Locale.getDefault(); // Get user's locale
         private ResourceBundle messages = ResourceBundle.getBundle("resources/messages", Locale.forLanguageTag("fr"));
-        private final ExecutorService executor = Executors.newFixedThreadPool(4);
+        private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
         private final ExceptionHandler exceptionHandler = new ExceptionHandler();
         protected Path logPath = Path.of("/var/opt/data/logs"); // Change this path as needed
         private List<Ride> rides;
