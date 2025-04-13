@@ -1,9 +1,12 @@
 package com.tus.ca.ride.hailing.app;
 
+import com.tus.ca.ride.hailing.enums.PaymentStatus;
 import com.tus.ca.ride.hailing.enums.RideStatus;
 import com.tus.ca.ride.hailing.exceptions.ExceptionHandler;
 import com.tus.ca.ride.hailing.handler.RideAnalyzer;
 import com.tus.ca.ride.hailing.model.Driver;
+import com.tus.ca.ride.hailing.model.Payment;
+import com.tus.ca.ride.hailing.service.PaymentService;
 import com.tus.ca.ride.hailing.service.Ride;
 import com.tus.ca.ride.hailing.service.RideCompletion;
 import com.tus.ca.ride.hailing.service.RideRequest;
@@ -32,7 +35,7 @@ import java.util.function.Supplier;
     public class Main {
         // Define a DateTimeFormatter for consistent formatting
         private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+        private final PaymentService paymentService = new PaymentService();
         private final Locale userLocale = Locale.getDefault(); // Get user's locale
         private ResourceBundle messages = ResourceBundle.getBundle("resources/messages", Locale.forLanguageTag("fr"));
         private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -76,6 +79,15 @@ import java.util.function.Supplier;
                 System.out.println("Processed ride: " + ride);
             };
 
+            // Supplier to create payment for a completed ride
+            Supplier<Payment> createPayment = () -> new Payment("P1", "U1", "D1", 25.0, PaymentStatus.PENDING);
+
+            // Consumer to process and validate payments
+            Consumer<Payment> processPayment = payment -> {
+                paymentService.processPayment(payment);
+                System.out.println("Processed payment: " + payment);
+            };
+
             // Tasks for concurrent ride processing
             List<Callable<Void>> tasks = List.of(
                     () -> {
@@ -84,6 +96,10 @@ import java.util.function.Supplier;
                     },
                     () -> {
                         exceptionHandler.executeSafely(() -> processRide.accept(createRideCompletion.get()), "RideCompletion R1", ExceptionUtility::logException);
+                        return null;
+                    },
+                    () -> {
+                        exceptionHandler.executeSafely(() -> processPayment.accept(createPayment.get()), "Payment P1", ExceptionUtility::logException);
                         return null;
                     }
             );
