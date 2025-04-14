@@ -8,7 +8,7 @@ public class Payment {
     private final String paymentId;
     private final String userId;
     private final String driverId;
-    private final double amount;
+    private double amount;
     private PaymentStatus status;
 
     public Payment(String paymentId, String userId, String driverId, double amount, PaymentStatus status) {
@@ -41,6 +41,10 @@ public class Payment {
 
     public void setStatus(PaymentStatus status) {
         this.status = status;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     @Override

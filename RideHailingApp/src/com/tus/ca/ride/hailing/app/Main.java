@@ -25,10 +25,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-    /**
+/**
      * Main class for the Ride Hailing application.
      * Simulates ride requests, ride completions, and analyzes rides using Stream APIs.
      */
@@ -80,10 +81,23 @@ import java.util.function.Supplier;
             };
 
             // Supplier to create payment for a completed ride
-            Supplier<Payment> createPayment = () -> new Payment("P1", "U1", "D1", 25.0, PaymentStatus.PENDING);
+            Supplier<Payment> createPayment = () -> new Payment("P1", "U1", "D1", 100.0, PaymentStatus.PENDING);
+
+
+            // Define a Function to apply discount only if amount > 100
+            Function<Double, Double> conditionalDiscount = amount -> {
+                if (amount > 100) {
+                    return amount * 0.9; // Apply a 10% discount
+                }
+                return amount; // No discount for amounts <= 100
+            };
 
             // Consumer to process and validate payments
             Consumer<Payment> processPayment = payment -> {
+                // Apply discount conditionally
+                double discountedAmount = conditionalDiscount.apply(payment.getAmount());
+                payment.setAmount(discountedAmount); // Update the payment amount with the discount (if any)
+
                 paymentService.processPayment(payment);
                 System.out.println("Processed payment: " + payment);
             };
